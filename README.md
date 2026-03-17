@@ -28,7 +28,7 @@ Self-balancing robots are a classic controls problem — the inverted pendulum. 
 
 This project implements that control loop on an Arduino Uno at a 10ms sample rate (100Hz). The IMU's DMP handles sensor fusion (accelerometer + gyroscope → stable pitch angle), the Arduino runs the PID computation, and the L298N drives the motors at variable PWM.
 
-https://github.com/komo-248/Self-Balancing-Robot/assets/videos/demo1.mp4
+[Demo Video 1](https://youtu.be/yieLOAEDcKs)
 
 ---
 
