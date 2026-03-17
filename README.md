@@ -254,4 +254,4 @@ The project went through several iterations. Each version is preserved in the re
 
 ## Demo
 
-https://github.com/komo-248/Self-Balancing-Robot/assets/videos/demo2.mp4
+https://github.com/user-attachments/assets/be4eb364-ad57-4d38-899f-8cc06fc9fc5a
