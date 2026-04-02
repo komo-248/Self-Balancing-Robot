@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Self-Balancing Robot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f6f3; --surface: #ffffff; --border: #e4e2dc;
+      --text: #1a1917; --muted: #7a7870; --accent: #2a5caa;
+      --accent-soft: #eef2fa; --tag-bg: #eeece8; --tag-text: #4a4840;
+      --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+
+    /* HEADER */
+    header { padding: 56px 0 48px; border-bottom: 1px solid var(--border); opacity: 0; animation: fadeUp 0.6s ease forwards; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; margin-bottom: 32px; transition: color 0.2s; }
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+    .hero-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    h1 { font-family: var(--mono); font-size: clamp(24px, 4vw, 36px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px; }
+    .hero-desc { font-size: 15px; color: var(--muted); font-weight: 300; max-width: 620px; line-height: 1.65; margin-bottom: 24px; }
+    .hero-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; padding: 7px 14px; border-radius: 3px; border: 1px solid var(--border); color: var(--muted); transition: all 0.15s; }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover { background: #1e4a8a; border-color: #1e4a8a; }
+    .btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+
+    /* SECTION */
+    .section { padding: 48px 0; border-bottom: 1px solid var(--border); opacity: 0; animation: fadeUp 0.5s ease forwards; }
+    .section:last-of-type { border-bottom: none; }
+    .section-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* TABLES */
+    .spec-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .spec-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    .spec-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    .spec-table tr:last-child td { border-bottom: none; }
+    .spec-table td:first-child { font-weight: 500; white-space: nowrap; min-width: 160px; }
+    .spec-table code { font-family: var(--mono); font-size: 12px; background: var(--tag-bg); padding: 2px 6px; border-radius: 2px; }
+
+    /* PID TABLE */
+    .pid-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 4px; }
+    .pid-cell { background: var(--surface); padding: 20px; text-align: center; }
+    .pid-cell .pid-val { font-family: var(--mono); font-size: 28px; font-weight: 300; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .pid-cell .pid-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .pid-cell .pid-desc { font-size: 12px; color: var(--muted); font-weight: 300; }
+
+    /* GALLERY */
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .gallery-item { background: var(--surface); overflow: hidden; aspect-ratio: 4/3; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+    .gallery-item:hover img { transform: scale(1.02); }
+    .gallery-item.wide { grid-column: span 2; aspect-ratio: 16/9; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .section:nth-child(2) { animation-delay: 0.05s; }
+    .section:nth-child(3) { animation-delay: 0.10s; }
+    .section:nth-child(4) { animation-delay: 0.15s; }
+    .section:nth-child(5) { animation-delay: 0.20s; }
+
+    /* FOOTER */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-inner span, .footer-inner a { font-family: var(--mono); font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.04em; transition: color 0.15s; }
+    .footer-inner a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 20px; }
+      .pid-grid { grid-template-columns: 1fr; }
+      .gallery-item.wide { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <a class="back-link" href="https://komo-248.github.io/komo.github.io">
+      <svg viewBox="0 0 24 24" stroke-width="1.6"><polyline points="15 18 9 12 15 6"/></svg>
+      Portfolio
+    </a>
+    <div class="hero-label">Controls & Embedded Systems</div>
+    <h1>Self-Balancing Robot</h1>
+    <p class="hero-desc">A two-wheeled inverted pendulum on an Arduino Uno. The MPU-6050's onboard DMP handles sensor fusion, feeding stable pitch angles into a PID controller that drives two geared DC motors through an L298N at 100Hz — keeping the robot upright in real time.</p>
+    <div class="hero-links">
+      <a class="btn primary" href="https://github.com/komo-248/Self-Balancing-Robot/tree/main" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- HARDWARE -->
+  <section class="section">
+    <div class="section-label">Hardware</div>
+    <table class="spec-table">
+      <thead><tr><th>Component</th><th>Part</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td>Microcontroller</td><td>Arduino Uno</td><td>ATmega328P, 5V</td></tr>
+        <tr><td>IMU</td><td>MPU-6050</td><td>6-axis accel/gyro, I2C, onboard DMP</td></tr>
+        <tr><td>Motor Driver</td><td>L298N</td><td>Dual H-bridge, 5V logic, up to 12V motor supply</td></tr>
+        <tr><td>Motors (×2)</td><td>JGA25-370</td><td>Geared DC, 1:34 ratio, 126 RPM @ 12V, 73mm wheel</td></tr>
+        <tr><td>Motor Supply</td><td>9V</td><td>Applied to motors via L298N</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PID -->
+  <section class="section">
+    <div class="section-label">PID Tuning — Final Values</div>
+    <div class="pid-grid">
+      <div class="pid-cell">
+        <div class="pid-label">kP</div>
+        <div class="pid-val">30</div>
+        <div class="pid-desc">Proportional — main balance force, responds to current tilt</div>
+      </div>
+      <div class="pid-cell">
+        <div class="pid-label">kI</div>
+        <div class="pid-val">90</div>
+        <div class="pid-desc">Integral — corrects steady-state lean and slow drift</div>
+      </div>
+      <div class="pid-cell">
+        <div class="pid-label">kD</div>
+        <div class="pid-val">0.5</div>
+        <div class="pid-desc">Derivative — damps oscillation and motor judder</div>
+      </div>
+    </div>
+    <p style="margin-top:16px; font-size:13px; color:var(--muted); font-weight:300;">Sample rate: 10ms (100Hz) · Trim angle: 2.85° · Output limits: −255 to +255 PWM</p>
+  </section>
+
+  <!-- DIAGRAMS -->
+  <section class="section">
+    <div class="section-label">Diagrams</div>
+    <div class="gallery">
+      <div class="gallery-item"><img src="images/Flowchart.drawio.png" alt="System Flowchart"/></div>
+      <div class="gallery-item"><img src="images/Hardware.drawio.png" alt="Hardware Diagram"/></div>
+      <div class="gallery-item"><img src="images/Loop system.drawio.png" alt="Control Loop"/></div>
+      <div class="gallery-item"><img src="images/State Diagram.drawio.png" alt="State Diagram"/></div>
+    </div>
+  </section>
+
+  <!-- SKETCH VERSIONS -->
+  <section class="section">
+    <div class="section-label">Sketch Versions</div>
+    <table class="spec-table">
+      <thead><tr><th>Sketch</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>RobotTest.ino</code></td><td>IMU validation — raw MPU-9250 output, pitch/roll calculation, verifies wiring before PID integration</td></tr>
+        <tr><td><code>TWRbalance-1.ino</code></td><td>First full balance attempt. L293D pinout, kP=150/kI=400/kD=5, trimAngle=−4.3°</td></tr>
+        <tr><td><code>TWRbalanceOURS.ino</code></td><td>Adapted to L298N pinout, gains reduced significantly, trimAngle=3.125°</td></tr>
+        <tr><td><code>TWRbalanceOURS_v2.ino</code></td><td>Final version — adds timed moveForward/standStill state machine, kP=30/kD=0.5</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span>komo-248 · Self-Balancing Robot</span>
+      <a href="https://komo-248.github.io/komo.github.io">← Portfolio</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
