@@ -55,6 +55,11 @@
     .pid-cell .pid-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
     .pid-cell .pid-desc { font-size: 12px; color: var(--muted); font-weight: 300; }
 
+    /* VIDEO */
+    .video-stack { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .video-wrap { background: #000; line-height: 0; }
+    .video-wrap video { width: 100%; max-height: 500px; display: block; }
+
     /* GALLERY */
     .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
     .gallery-item { background: var(--surface); overflow: hidden; aspect-ratio: 4/3; }
@@ -137,6 +142,23 @@
       </div>
     </div>
     <p style="margin-top:16px; font-size:13px; color:var(--muted); font-weight:300;">Sample rate: 10ms (100Hz) · Trim angle: 2.85° · Output limits: −255 to +255 PWM</p>
+  </section>
+
+  <!-- VIDEO -->
+  <section class="section">
+    <div class="section-label">Demo</div>
+    <div class="video-stack">
+      <div class="video-wrap">
+        <video controls playsinline preload="metadata">
+          <source src="https://github.com/user-attachments/assets/cb575d8d-a5aa-4a84-9c65-c35fd7ae2f18" type="video/mp4"/>
+        </video>
+      </div>
+      <div class="video-wrap">
+        <video controls playsinline preload="metadata">
+          <source src="https://github.com/user-attachments/assets/be4eb364-ad57-4d38-899f-8cc06fc9fc5a" type="video/mp4"/>
+        </video>
+      </div>
+    </div>
   </section>
 
   <!-- DIAGRAMS -->
